@@ -1,14 +1,13 @@
-# Use an AWS Lambda Python 3.11 base image
-FROM public.ecr.aws/lambda/python:3.11
+FROM public.ecr.aws/lambda/python:3.10
 
-# Set the working directory
-WORKDIR /var/task
+# Copy function code
+COPY ./app ${LAMBDA_TASK_ROOT}
 
-# Copy the application files
-COPY app /var/task/
+# Copy requirements file
+COPY requirements.txt .
 
 # Install dependencies
-RUN pip install --no-cache-dir -r /var/task/requirements.txt
+RUN pip3 install --target "${LAMBDA_TASK_ROOT}" --upgrade --no-cache-dir -r requirements.txt
 
-# Set the command for AWS Lambda
+# AWS Lambda requires a handler function
 CMD ["main.handler"]
